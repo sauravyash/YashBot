@@ -1,0 +1,18 @@
+{
+  "name": "yashbot",
+  "version": "1.0.0",
+  "description": "Discord Bot for chat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yash Agasti",
+  "license": "ISC",
+  "dependencies": {
+    "better-cleverbot-io": "^1.0.2",
+    "cleverbot-node": "^0.3.11",
+    "cleverbot.io": "^1.0.4",
+    "discord.js": "^11.1.0",
+    "node-wit": "^4.3.0"
+  }
+}
