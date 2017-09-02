@@ -11,11 +11,7 @@ var botResponse = "";
 var math = require('mathjs');
 
 // wolfram alpha
-var wolfram = require('wolfram-alpha').createClient("7A4V76-29EG5L33J7");
-
-var results = yield wolfram.query("integrate 2x")
-console.log("Result: %j", results);
-
+var wolfram = require('wolfram').createClient("7A4V76-29EG5L33J7");
 
 
 // when discord bot is ready
@@ -98,14 +94,25 @@ client.on("message", async message => {
       // console.log(serverResponse.entities);
       }
       else if (serverResponse.entities.intent !== undefined){
-        if (serverResponse.entities.intent[0].value === 'ni')
-        var botResponse = 'https://www.youtube.com/watch?v=S9zeQMbGEPc&t=9&end=22';
-        message.channel.send('Get Lost!');
+        if (serverResponse.entities.intent[0].value === 'ni') {
+          var botResponse = 'https://www.youtube.com/watch?v=S9zeQMbGEPc&t=9&end=22';
+          message.channel.send('Get Lost!');
+        }
       }
+      /*else if (serverResponse.entities.wolfram_search_query !== undefined){
+        //function (callback) {
+          wolfram.query(sayMessage, function(err, result) {
+            if(err) throw err
+            console.log("Result: %j", result[0].subpods[0].value);
+            var botResponse = result[0].subpods[0].value;
+            // callback(null, "done");
+          });
+        // }
+      }*/
       else {
         var botResponse = 'I did not understand what you asked me.'
       }
-      //console.log(serverResponse.entities.intent[0].value);
+      //console.log(serverResponse.entities);
       console.log(botResponse);
       message.channel.send('' + botResponse)
     }).catch(console.error);
