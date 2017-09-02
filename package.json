@@ -2,7 +2,7 @@
   "name": "yashbot",
   "version": "1.0.0",
   "engines": {
-    "node": "6.11.1"
+    "node": "8.x.x"
   },
   "description": "Discord Bot for chat",
   "main": "index.js",
@@ -12,7 +12,6 @@
   "author": "Yash Agasti",
   "license": "ISC",
   "dependencies": {
-    "async": "^2.5.0",
     "better-cleverbot-io": "^1.0.2",
     "cleverbot-node": "^0.3.11",
     "cleverbot.io": "^1.0.4",
