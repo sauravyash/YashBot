@@ -3,9 +3,8 @@ const Discord = require('discord.js');
 const client = new Discord.Client();
 var nickname = 'trial';
 
-// cleverbot
-var cleverbot = require("cleverbot.io"),
-bot = new cleverbot("jOLw1l2WlaBP22Ou", "3PFbyKjQaRXY0cKBs7WtPXgydsqFei56");
+const Wit = require('node-wit').Wit;
+const clientWit = new Wit({accessToken: 'RQSTOQ2DHMLU5VSWUCVQU7QARUMJ6TWB'});
 
 // when discord bot is ready
 client.on('ready', () => {
@@ -33,9 +32,9 @@ client.on("message", async message => {
   // and not get into a spam loop (we call that "botception").
   if(message.author.bot) return;
 
-  // respond with cleverbot
-  if (message.content.indexOf('@YashBot') >= 0) {
-    message.reply('ok');
+  // respond with to call
+  if (message.content.indexOf('@YashBot') == 0) {
+    message.channel.send('whats up?');
     return;
   }
 
