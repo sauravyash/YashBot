@@ -12,6 +12,7 @@
   "author": "Yash Agasti",
   "license": "ISC",
   "dependencies": {
+    "async": "^2.5.0",
     "better-cleverbot-io": "^1.0.2",
     "cleverbot-node": "^0.3.11",
     "cleverbot.io": "^1.0.4",
