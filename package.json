@@ -1,6 +1,9 @@
 {
   "name": "yashbot",
   "version": "1.0.0",
+  "engines": {
+    "node": "6.11.1"
+  },
   "description": "Discord Bot for chat",
   "main": "index.js",
   "scripts": {

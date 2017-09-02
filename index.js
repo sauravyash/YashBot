@@ -95,7 +95,7 @@ client.on("message", async message => {
         var botResponse = 'I did not understand what you asked me.'
       }
       //console.log(serverResponse.entities.intent[0].value);
-      console.log('math is: ' + botResponse);
+      console.log(botResponse);
       message.reply('' + botResponse);
     }).catch(console.error);
     return;
