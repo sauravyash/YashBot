@@ -10,6 +10,14 @@ var botResponse = "";
 // math js
 var math = require('mathjs');
 
+// wolfram alpha
+var wolfram = require('wolfram-alpha').createClient("7A4V76-29EG5L33J7");
+
+var results = yield wolfram.query("integrate 2x")
+console.log("Result: %j", results);
+
+
+
 // when discord bot is ready
 client.on('ready', () => {
   console.log('I am ready!');
@@ -68,8 +76,11 @@ client.on("message", async message => {
   }
 
   //delete last message
-  if(command === 'deletelm') {
-    message.delete().catch(O_o=>{});
+  if(command === 'delete') {
+    const sayMessage = args.join(" ");
+    let messagecount = parseInt(sayMessage);
+    message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
+  //  message.delete(2).catch(O_o=>{});
   }
 
   // respond with to call
@@ -77,14 +88,14 @@ client.on("message", async message => {
     const sayMessage = args.join(" ");
     clientWit.message(sayMessage, {}).then((data) => {
       var serverResponse = data;
-      console.log(serverResponse.entities);
+      console.log(serverResponse);
       if (serverResponse.entities.math_expression !== undefined){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
           var botResponse = math.eval(sayMessage);
         }
-      console.log(serverResponse.entities);
+      // console.log(serverResponse.entities);
       }
       else if (serverResponse.entities.intent !== undefined){
         if (serverResponse.entities.intent[0].value === 'ni')
