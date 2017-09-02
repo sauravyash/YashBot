@@ -77,21 +77,27 @@ client.on("message", async message => {
     const sayMessage = args.join(" ");
     clientWit.message(sayMessage, {}).then((data) => {
       var serverResponse = data;
-      console.log(serverResponse);
+      console.log(serverResponse.entities);
       if (serverResponse.entities.math_expression !== undefined){
-        var botResponse = math.eval(sayMessage);
-        console.log('math is: ' + botResponse);
+        if (sayMessage === '0/0') {
+          var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
+        } else {
+          var botResponse = math.eval(sayMessage);
+        }
+      console.log(serverResponse.entities);
       }
-      else if (sayMessage.indexOf('ni') >= 0){
-        var botResponse = 'Get Lost!';
+      else if (serverResponse.entities.intent !== undefined){
+        if (serverResponse.entities.intent[0].value === 'ni')
+        var botResponse = 'https://www.youtube.com/watch?v=S9zeQMbGEPc&t=9&end=22';
+        message.channel.send('Get Lost!')
       }
       else {
-        var botResponse = 'I did understand what you asked me.'
+        var botResponse = 'I did not understand what you asked me.'
       }
+      //console.log(serverResponse.entities.intent[0].value);
       console.log('math is: ' + botResponse);
       message.reply('' + botResponse);
     }).catch(console.error);
-
     return;
   }
 });
