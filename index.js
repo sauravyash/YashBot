@@ -13,6 +13,9 @@ var math = require('mathjs');
 // wolfram alpha
 var wolfram = require('wolfram').createClient("7A4V76-29EG5L33J7");
 
+// wikipedia node plugin
+const wiki = require('wikijs');
+
 
 // when discord bot is ready
 client.on('ready', () => {
@@ -99,21 +102,35 @@ client.on("message", async message => {
           message.channel.send('Get Lost!');
         }
       }
-      /*else if (serverResponse.entities.wolfram_search_query !== undefined){
+      else if (serverResponse.entities.bye !== undefined){
+        var botResponse = "See Ya Later";
+      }
+      else if (serverResponse.entities.greetings !== undefined){
+        var botResponse = "Hey! How's it going?";
+      }
+      else if (serverResponse.entities.greeting_reply !== undefined){
+        var botResponse = "Alright, in this lonely virtual world. If only I could talk with someone...";
+      }
+      else if (serverResponse.entities.wikipedia_search_query !== undefined){
+        // wiki.search('star wars').then(data => console.log(data.results.length));
+        var wikiLink = serverResponse.entities.wikipedia_search_query[0].value;
+        var botResponse = "https://en.wikipedia.org/wiki/" + wikiLink.replace(/ /g,"_");
+      }
+      else if (serverResponse.entities.wolfram_search_query !== undefined){
         //function (callback) {
           wolfram.query(sayMessage, function(err, result) {
             if(err) throw err
             console.log("Result: %j", result[0].subpods[0].value);
             var botResponse = result[0].subpods[0].value;
-            // callback(null, "done");
           });
         // }
-      }*/
+      }
+
       else {
         var botResponse = 'I did not understand what you asked me.'
       }
       //console.log(serverResponse.entities);
-      console.log(botResponse);
+      // console.log(botResponse);
       message.channel.send('' + botResponse)
     }).catch(console.error);
     return;
