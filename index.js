@@ -89,14 +89,14 @@ client.on("message", async message => {
       else if (serverResponse.entities.intent !== undefined){
         if (serverResponse.entities.intent[0].value === 'ni')
         var botResponse = 'https://www.youtube.com/watch?v=S9zeQMbGEPc&t=9&end=22';
-        message.channel.send('Get Lost!')
+        message.channel.send('Get Lost!');
       }
       else {
         var botResponse = 'I did not understand what you asked me.'
       }
       //console.log(serverResponse.entities.intent[0].value);
       console.log(botResponse);
-      message.reply('' + botResponse);
+      message.channel.send('' + botResponse)
     }).catch(console.error);
     return;
   }
