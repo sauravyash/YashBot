@@ -1,10 +1,14 @@
 // discord
 const Discord = require('discord.js');
 const client = new Discord.Client();
-var nickname = 'trial';
 
+// wit ai
 const Wit = require('node-wit').Wit;
 const clientWit = new Wit({accessToken: 'RQSTOQ2DHMLU5VSWUCVQU7QARUMJ6TWB'});
+var botResponse = "";
+
+// math js
+var math = require('mathjs');
 
 // when discord bot is ready
 client.on('ready', () => {
@@ -32,17 +36,9 @@ client.on("message", async message => {
   // and not get into a spam loop (we call that "botception").
   if(message.author.bot) return;
 
-  // respond with to call
-  if (message.content.indexOf('@YashBot') == 0) {
-    message.channel.send('whats up?');
-    return;
-  }
-
   // Also good practice to ignore any message that does not start with our prefix,
   // which is set in the configuration file.
   if(message.content.indexOf('!') !== 0) return;
-
-
 
   // Here we separate our "command" name, and our "arguments" for the command.
   // e.g. if we have the message "+say Is this the real life?" , we'll get the following:
@@ -69,6 +65,34 @@ client.on("message", async message => {
     message.delete().catch(O_o=>{});
     // And we get the bot to say the thing:
     message.channel.send(sayMessage);
+  }
+
+  //delete last message
+  if(command === 'deletelm') {
+    message.delete().catch(O_o=>{});
+  }
+
+  // respond with to call
+  if (command === 'ask') {
+    const sayMessage = args.join(" ");
+    clientWit.message(sayMessage, {}).then((data) => {
+      var serverResponse = data;
+      console.log(serverResponse);
+      if (serverResponse.entities.math_expression !== undefined){
+        var botResponse = math.eval(sayMessage);
+        console.log('math is: ' + botResponse);
+      }
+      else if (sayMessage.indexOf('ni') >= 0){
+        var botResponse = 'Get Lost!';
+      }
+      else {
+        var botResponse = 'I did understand what you asked me.'
+      }
+      console.log('math is: ' + botResponse);
+      message.reply('' + botResponse);
+    }).catch(console.error);
+
+    return;
   }
 });
 
