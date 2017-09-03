@@ -1,23 +1,9 @@
 // filesystem node
 var fs = require('fs');
 // keys
-var conf = require("./config.json");
-fs.stat('./config.json', function(err, stat) {
-    if(err == null) {
-    }
-    else if(err.code == 'ENOENT') {
-      // heroku config vars
-      const aws = require('aws-sdk');
-
-      let conf = new aws.S3({
-        witKey: process.env.witKey,
-        discordKey: process.env.discordKey
-      });
-    }
-    else {
-        console.log('config.json error: ', err.code);
-    }
-});
+//var conf = require("./config.json");
+// heroku config vars
+const aws = require('aws-sdk'); let conf = new aws.S3({witKey: process.env.witKey,discordKey: process.env.discordKey});
 
 // discord
 const Discord = require('discord.js');
