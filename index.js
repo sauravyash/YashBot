@@ -3,7 +3,7 @@ var fs = require('fs');
 // keys
 //var conf = require("./config.json");
 // heroku config vars
-const aws = require('aws-sdk'); let conf = new aws.S3({witKey: process.env.witKey,discordKey: process.env.discordKey});
+const aws = require('aws-sdk'); var conf = new aws.S3({witKey: process.env.witKey,discordKey: process.env.discordKey});
 
 // discord
 const Discord = require('discord.js');
