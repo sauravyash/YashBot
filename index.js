@@ -13,8 +13,8 @@ var math = require('mathjs');
 // wolfram alpha
 var wolfram = require('wolfram').createClient("7A4V76-29EG5L33J7");
 
-// wikipedia node plugin
-const wiki = require('wikijs');
+// request http json plugin
+var request = require("request")
 
 
 // when discord bot is ready
@@ -87,8 +87,18 @@ client.on("message", async message => {
     const sayMessage = args.join(" ");
     clientWit.message(sayMessage, {}).then((data) => {
       var serverResponse = data;
-      console.log(serverResponse);
-      if ((serverResponse.entities.math_expression !== undefined)||(serverResponse.entities.math_term !== undefined)){
+      console.log(serverResponse.entities);
+      if(sayMessage === ''){
+        var botResponse = "Please don't waste my time, you human.";
+      } else if (serverResponse.entities.meaningOfLife !== undefined){
+        message.channel.send('42');
+      }
+      else if (serverResponse.entities.math_term !== undefined) {
+        if (serverResponse.entities.math_term[0].value === 'round'){
+          var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
+        }
+      }
+      else if (serverResponse.entities.math_expression !== undefined){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
@@ -113,8 +123,24 @@ client.on("message", async message => {
       }
       else if (serverResponse.entities.wikipedia_search_query !== undefined){
         // wiki.search('star wars').then(data => console.log(data.results.length));
-        var wikiLink = serverResponse.entities.wikipedia_search_query[0].value;
-        var botResponse = "https://en.wikipedia.org/wiki/" + wikiLink.replace(/ /g,"_");
+        var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
+        var wikiLink = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + toTitleCase(wikiTitle);
+        request({
+            url: wikiLink,
+            json: true
+        }, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+              var key = Object.keys(body.query.pages)[0];
+              //console.log(body) // Print the json response
+              var tmpJSON = Object.entries(body.query.pages);
+              var dataJSON = tmpJSON[0];
+              var title = dataJSON[1].title;
+              var extract = dataJSON[1].extract;
+              message.channel.send(title);
+              message.channel.send(extract.substring(0, 300) + '...');
+              console.log(dataJSON[1].extract);
+            }
+        });
       }
       else if (serverResponse.entities.wolfram_search_query !== undefined){
         //function (callback) {
@@ -131,12 +157,17 @@ client.on("message", async message => {
       }
       //console.log(serverResponse.entities);
       // console.log(botResponse);
-      message.channel.send('' + botResponse)
+      if (botResponse !== undefined){
+        message.channel.send('' + botResponse)
+      }
     }).catch(console.error);
     return;
   }
 });
 
-
+function toTitleCase(str)
+{
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
 
 client.login('MzUyNzkxNzY3Njg0MzQ5OTY1.DImSgA.p2CNbr0MOMO5BdDop0Gb-rQCWTY');
