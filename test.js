@@ -1,23 +1,10 @@
-var request = require("request")
-var title = "";
-var desc = "";
-var JSONinfo = "";
-var url = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=Stack_Overflow";
-console.log('im ready');
-request({
-    url: url,
-    json: true
-}, function (error, response, body) {
-    if (!error && response.statusCode === 200) {
-      var key = Object.keys(body.query.pages)[0];
-      //console.log(body) // Print the json response
-      var theJSON = Object.entries(body.query.pages);
-      var tmpJSON = theJSON[0];
-      console.log(tmpJSON[1].title);
-      //var JSONinfo = body;
-    }
-});
+// wolfram alpha
+var wolfram = require('wolfram').createClient("7A4V76-29EG5L33J7");
 
-//console.log(JSONinfo);
-console.log(title);
-console.log(desc);
+var sayMessage = 'what is th distance from earth to the sun?';
+
+wolfram.query(sayMessage, function(err, result) {
+  if(err) throw err
+  console.log("Result: %j", result[0].subpods[0].value);
+  var botResponse = result[0].subpods[0].value;
+});

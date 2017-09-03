@@ -1,5 +1,20 @@
-//config json
-var conf = require("./config.json")
+// path node
+var path = require('path');
+
+if (path.existsSync('./config.json')) {
+  //config json
+  var conf = require("./config.json")
+} else {
+  // heroku config vars
+  const aws = require('aws-sdk');
+
+  let conf = new aws.S3({
+    witKey: process.env.witKey,
+    discordKey: process.env.discordKey
+  });
+}
+
+
 
 
 // discord
