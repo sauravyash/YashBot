@@ -4,7 +4,7 @@ const client = new Discord.Client();
 
 // wit ai
 const Wit = require('node-wit').Wit;
-const clientWit = new Wit({accessToken: 'RQSTOQ2DHMLU5VSWUCVQU7QARUMJ6TWB'});
+const clientWit = new Wit({accessToken: 'H6HPQEBGA453N7XWFO7EUXC5TYWCFMJA'}); // public token i will change as often as possible
 var botResponse = "";
 
 // math js
