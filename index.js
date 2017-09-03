@@ -139,6 +139,11 @@ client.on("message", async message => {
               file: "https://i.imgur.com/xDarAVy.jpg"
           });
         }
+        else if (serverResponse.entities.meme[0].value === 'skyrim'){
+          message.channel.send("", {
+              file: "https://i.pinimg.com/736x/78/fb/39/78fb3994a9f0c2d23cdac300ad8f703b--skyrim-so-true.jpg"
+          });
+        }
         else {
           message.channel.send("IDK this meme yet", {
               file: "http://i0.kym-cdn.com/entries/icons/original/000/023/033/image.jpeg"
@@ -174,7 +179,6 @@ client.on("message", async message => {
         var botResponse = "I'm alright, in this lonely virtual world. If only I could talk with someone...";
       }
       else if (serverResponse.entities.wikipedia_search_query !== undefined){
-        // wiki.search('star wars').then(data => console.log(data.results.length));
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
         var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
         request({
