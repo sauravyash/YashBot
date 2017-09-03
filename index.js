@@ -88,7 +88,7 @@ client.on("message", async message => {
     clientWit.message(sayMessage, {}).then((data) => {
       var serverResponse = data;
       console.log(serverResponse);
-      if (serverResponse.entities.math_expression !== undefined){
+      if ((serverResponse.entities.math_expression !== undefined)||(serverResponse.entities.math_term !== undefined)){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
