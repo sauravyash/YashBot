@@ -1,10 +1,14 @@
+//config json
+var conf = require("./config.json")
+
+
 // discord
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
 // wit ai
 const Wit = require('node-wit').Wit;
-const clientWit = new Wit({accessToken: 'H6HPQEBGA453N7XWFO7EUXC5TYWCFMJA'}); // public token i will change as often as possible
+const clientWit = new Wit({accessToken: conf.witKey}); // public token i will change as often as possible
 var botResponse = "";
 
 // math js
@@ -62,6 +66,16 @@ client.on("message", async message => {
     message.delete().catch(O_o=>{});
     const m = await message.channel.send("Ping?");
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+    if (Math.round(client.ping) > 50) {
+      message.channel.send("", {
+          file: "https://pbs.twimg.com/media/CURozNvUAAAhHCF.png"
+      });
+    }
+    else {
+      message.channel.send("", {
+          file: "https://pbs.twimg.com/media/CURozNvUAAAhHCF.png"
+      });
+    }
   }
 
   if(command === "say") {
@@ -77,9 +91,14 @@ client.on("message", async message => {
   //delete last message
   if(command === 'delete') {
     const sayMessage = args.join(" ");
-    let messagecount = parseInt(sayMessage);
-    message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
-  //  message.delete(2).catch(O_o=>{});
+    let modRole = message.guild.roles.find("name", "Admin");
+    if(message.member.roles.has(modRole.id)) {
+      let messagecount = parseInt(sayMessage);
+      message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
+    }
+    else {
+      return message.reply("Your not an admin :(")
+    }
   }
 
   // respond with to call
@@ -90,15 +109,43 @@ client.on("message", async message => {
       console.log(serverResponse.entities);
       if(sayMessage === ''){
         var botResponse = "Please don't waste my time, you human.";
-      } else if (serverResponse.entities.meaningOfLife !== undefined){
+      }
+      else if (serverResponse.entities.meaningOfLife !== undefined){
         message.channel.send('42');
+      }
+      else if (serverResponse.entities.meme !== undefined){
+        if (serverResponse.entities.meme[0].value === 'doge'){
+          message.channel.send("", {
+              file: "http://i.imgur.com/E5cFOWY.jpg"
+          });
+        }
+        else if (serverResponse.entities.meme[0].value === 'dat boi'){
+          message.channel.send("", {
+              file: "http://i0.kym-cdn.com/photos/images/facebook/001/114/967/63f.jpg"
+          });
+        }
+        else if (serverResponse.entities.meme[0].value === 'playboy'){
+          message.channel.send("", {
+              file: "https://res.cloudinary.com/teepublic/image/private/s--TRM-_Kj3--/t_Preview/b_rgb:c8e0ec,c_limit,f_jpg,h_630,q_90,w_630/v1462386297/production/designs/502590_1.jpg"
+          });
+        }
+        else if (serverResponse.entities.meme[0].value === 'lit'){
+          message.channel.send("", {
+              file: "https://i.imgur.com/xDarAVy.jpg"
+          });
+        }
+        else {
+          message.channel.send("IDK this meme yet", {
+              file: "http://i0.kym-cdn.com/entries/icons/original/000/023/033/image.jpeg"
+          });
+        }
       }
       else if (serverResponse.entities.math_term !== undefined) {
         if (serverResponse.entities.math_term[0].value === 'round'){
           var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if (serverResponse.entities.math_expression !== undefined){
+      else if (serverResponse.entities.math_expression !== undefined && serverResponse.entities.number !== undefined ){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
@@ -119,26 +166,42 @@ client.on("message", async message => {
         var botResponse = "Hey! How's it going?";
       }
       else if (serverResponse.entities.greeting_reply !== undefined){
-        var botResponse = "Alright, in this lonely virtual world. If only I could talk with someone...";
+        var botResponse = "I'm alright, in this lonely virtual world. If only I could talk with someone...";
       }
       else if (serverResponse.entities.wikipedia_search_query !== undefined){
         // wiki.search('star wars').then(data => console.log(data.results.length));
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
-        var wikiLink = "https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&titles=" + toTitleCase(wikiTitle);
+        var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
         request({
             url: wikiLink,
             json: true
         }, function (error, response, body) {
             if (!error && response.statusCode === 200) {
-              var key = Object.keys(body.query.pages)[0];
               //console.log(body) // Print the json response
-              var tmpJSON = Object.entries(body.query.pages);
-              var dataJSON = tmpJSON[0];
-              var title = dataJSON[1].title;
-              var extract = dataJSON[1].extract;
-              message.channel.send(title);
-              message.channel.send(extract.substring(0, 300) + '...');
-              console.log(dataJSON[1].extract);
+              // var dataJSON = ;
+              var dataJSON = body.query.search[0];
+              if (dataJSON !== undefined) {
+                var title = dataJSON.title;
+                var extract = dataJSON.extract;
+                message.channel.send(title);
+                var key = dataJSON.pageid;
+                request({
+                    url: 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&pageids=' + key,
+                    json: true
+                }, function (error, response, body) {
+                    if (!error && response.statusCode === 200) {
+                      var tmpJSON = Object.entries(body.query.pages);
+                      var dataJSON = tmpJSON[0];
+                      var extract = dataJSON[1].extract;
+                      message.channel.send(extract.substring(0, 300) + '...');
+                      // console.log(dataJSON[1].extract);
+                    }
+                });
+                // console.log(dataJSON[1].extract);
+              }
+              else {
+                message.channel.send("I don't know what " + wikiTitle + " means.");
+              }
             }
         });
       }
@@ -154,6 +217,9 @@ client.on("message", async message => {
 
       else {
         var botResponse = 'I did not understand what you asked me.'
+        message.channel.send("ಠ_ಠ", {
+            file: "http://weknowmemes.com/wp-content/uploads/2011/09/look-of-disapproval.jpg"
+        });
       }
       //console.log(serverResponse.entities);
       // console.log(botResponse);
@@ -170,4 +236,4 @@ function toTitleCase(str)
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-client.login('MzUyNzkxNzY3Njg0MzQ5OTY1.DImSgA.p2CNbr0MOMO5BdDop0Gb-rQCWTY');
+client.login(conf.discordKey);
