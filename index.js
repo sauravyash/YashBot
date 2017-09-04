@@ -174,7 +174,10 @@ client.on("message", async message => {
           var botResponse = "Remember when I asked for your opinion? Me neither.";
         }
         else if (serverResponse.entities.insult[0].value === 'retard') {
-          var botResponse = "Your ass must be pretty jealous of all the shit that comes out of your mouth.";
+          var botResponse = "I can’t help imagining how much awesomer the world would be if your dad had just pulled out.";
+        }
+        else if (serverResponse.entities.insult[0].value === 'terrible') {
+          var botResponse = "Do your parents even realize they’re living proof that two wrongs don’t make a right?";
         }
       }
       else if (serverResponse.entities.bye !== undefined){
