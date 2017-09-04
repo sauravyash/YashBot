@@ -169,6 +169,14 @@ client.on("message", async message => {
           message.channel.send('Get Lost!');
         }
       }
+      else if (serverResponse.entities.insult !== undefined){
+        if (serverResponse.entities.insult[0].value === 'stupid') {
+          var botResponse = "Remember when I asked for your opinion? Me neither.";
+        }
+        else if (serverResponse.entities.insult[0].value === 'retard') {
+          var botResponse = "Your ass must be pretty jealous of all the shit that comes out of your mouth.";
+        }
+      }
       else if (serverResponse.entities.bye !== undefined){
         var botResponse = "See Ya Later";
       }
