@@ -24,12 +24,6 @@ client.login(discordKey);
 
 var bot = require("discord-music-bot");
 
-// var config = require("./config.json");
-var discordKey = config.discordKey;
-var witKey = config.witKey;
-var wolframKey = config.wolframKey;
-var giphyKey = config.giphyKey;
-var youtubeKey = config.youtubeKey;
 
 bot.setYoutubeKey(youtubeKey);
 var serverName = 'The Elder Scrollers';
