@@ -1,7 +1,7 @@
 // filesystem node
 //var fs = require('fs');
 // keys
-var conf = require("./config.json");
+// var conf = require("./config.json");
 // heroku config vars
 var conf = process.env;
 
