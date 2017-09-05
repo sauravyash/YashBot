@@ -257,8 +257,7 @@ client.on("message", async message => {
 function randomInsult() {
     var bodyPart = ["face", "foot", "nose", "hand", "head", "mouth", "finger", 'palm', 'wrist', 'forearm', 'elbow', 'upper arm', 'shoulder', 'thumb', 'nail', 'knuckle'];
     var adjective = ["hairy and", "extremely", "insultingly", "astonishingly","skanky", "indolent" , "abominable" ,"abhorrent" ,"bigheaded" ,"bilious" ,"bitter" ,"calculating" ,"cantankerous","conceited" ,"namby-pamby","gutless" ,"smutty", "vile", "lousy", "grotty", "crude" ,"uncouth", "disgusting", "revolting" ,"wicked", "despicable", "sinister" ];
-    var adjectiveTwo = ["stupid", "gigantic", "fat", "horrid", "scary",'lazy' ,'ugly' , 'ugliest' ,'clumsy' ,'ratty' ,'crazy' ,'nasty' ,'robust' ,'fat' 'nutty' ,'scrawny',
-    'odd' ,'silly' ,'stingy' ,'strange' ,'grumpy' ,'spotty' ,'prickly' ,'horrible' ,'Foul-Smelling' ,'Boring' ,'Stupid' ,'Evil' ,'Horrible' , 'Creepy' , 'Annoying'];
+    var adjectiveTwo = ["stupid", "gigantic", "fat", "horrid", "scary",'lazy' ,'ugly' , 'ugliest' ,'clumsy' ,'ratty' ,'crazy' ,'nasty' ,'robust' ,'fat', 'nutty' ,'scrawny','odd' ,'silly' ,'stingy', 'strange' ,'grumpy' ,'spotty' ,'prickly' ,'horrible' ,'Foul-Smelling' ,'Boring' ,'Stupid' ,'Evil' ,'Horrible' , 'Creepy' , 'Annoying'];
     var animal = ["baboon", "sasquatch", "sloth", "naked cat", "warthog", 'Star-nosed Mole', 'Vampire Bat'];
     var bodyPart = bodyPart[Math.floor(Math.random() * 5)];
     var adjective = adjective[Math.floor(Math.random() * 4)];
