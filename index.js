@@ -1,11 +1,9 @@
 // filesystem node
-var fs = require('fs');
+//var fs = require('fs');
 // keys
-//var conf = require("./config.json");
+var conf = require("./config.json");
 // heroku config vars
-// const aws = require('aws-sdk');
-// var herokuKey = new aws.S3({witKey: process.env.witKey,discordKey: process.env.discordKey});
-var conf = {  "witKey": "H6HPQEBGA453N7XWFO7EUXC5TYWCFMJA",  "discordKey": "MzUyNzkxNzY3Njg0MzQ5OTY1.DImSgA.p2CNbr0MOMO5BdDop0Gb-rQCWTY"}
+var conf = process.env;
 
 // discord
 const Discord = require('discord.js');
@@ -13,7 +11,7 @@ const client = new Discord.Client();
 
 // wit ai
 const Wit = require('node-wit').Wit;
-const clientWit = new Wit({accessToken: conf.witKey}); // public token i will change as often as possible
+const clientWit = new Wit({accessToken: process.env.witKey}); // public token i will change as often as possible
 var botResponse = "";
 
 // math js
@@ -256,4 +254,4 @@ function toTitleCase(str)
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
 
-client.login(conf.discordKey);
+client.login(process.env.discordKey);
