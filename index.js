@@ -2,18 +2,20 @@
 var fs = require('fs');
 
 // declare key vars
-var discordKey, witKey, wolframKey;
+var discordKey, witKey, wolframKey, giphyKey;
 
 if (fs.existsSync('./config.json')) {
     var config = require("./config.json");
     var discordKey = config.discordKey;
     var witKey = config.witKey;
     var wolframKey = config.wolframKey;
+    var giphyKey = config.giphyKey;
 }
 else {
   var discordKey = process.env.discordKey;
   var witKey = process.env.witKey;
   var wolframKey = process.env.wolframKey;
+  var giphyKey = process.env.giphyKey;
 }
 
 // discord
@@ -106,6 +108,7 @@ client.on("message", async message => {
     }
   }
 
+
   // respond with to call
   if (command === 'ask') {
     const sayMessage = args.join(" ");
@@ -118,6 +121,23 @@ client.on("message", async message => {
       }
       else if (serverResponse.entities.meaningOfLife !== undefined){
         message.channel.send('42');
+      }
+      else if (serverResponse.entities.gif !== undefined) {
+        var searchQuery = serverResponse.entities.meme[0].value.replace("gif", "")
+        var gifLink = 'http://api.giphy.com/v1/gifs/search?rating=pg-13&api_key=' + giphyKey + '&q='+ searchQuery;
+        // console.log(gifLink);
+        request({
+            url: gifLink,
+            json: true
+        }, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+              //console.log(body) // Print the json response
+              // var memeSearch = ;
+              var imgSRC = body.data[Math.floor(Math.random() * body.data.length)].embed_url;
+              console.log(imgSRC);
+              message.channel.send('' + imgSRC);
+            }
+        });
       }
       else if (serverResponse.entities.meme !== undefined){
         if (serverResponse.entities.meme[0].value === 'doge'){
@@ -150,6 +170,7 @@ client.on("message", async message => {
                 //console.log(body) // Print the json response
                 var memeSearch = body.resp[Math.floor(Math.random() * body.resp.length)];
                 var imgSRC = memeSearch.src;
+                console.log(imgSRC);
                 message.channel.send("", {file: imgSRC});
               }
           });

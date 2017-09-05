@@ -12,4 +12,6 @@ wolfram.query(sayMessage, function(err, result) {
 
 //var conf = {  "witKey": "H6HPQEBGA453N7XWFO7EUXC5TYWCFMJA",  "discordKey": "MzUyNzkxNzY3Njg0MzQ5OTY1.DImSgA.p2CNbr0MOMO5BdDop0Gb-rQCWTY"};
 var conf = require("./config.json");
-console.log(conf);
+var giphy = require( 'giphy' )( '' );
+//console.log( giphy.getMethods() );
+giphy.search({ search : [ 'skyrim' ]}, handleGifs)
