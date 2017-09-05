@@ -8,6 +8,7 @@
 // discord
 const Discord = require('discord.js');
 const client = new Discord.Client();
+client.login(process.env.discordKey);
 
 // wit ai
 const Wit = require('node-wit').Wit;
@@ -253,5 +254,3 @@ function toTitleCase(str)
 {
     return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
 }
-
-client.login(process.env.discordKey);
