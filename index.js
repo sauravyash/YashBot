@@ -3,7 +3,7 @@
 // keys
 // var conf = require("./config.json");
 // heroku config vars
-var conf = process.env;
+// var conf = process.env;
 
 // discord
 const Discord = require('discord.js');
