@@ -24,7 +24,7 @@ client.login(discordKey);
 
 var bot = require("discord-music-bot");
 
-var config = require("./config.json");
+// var config = require("./config.json");
 var discordKey = config.discordKey;
 var witKey = config.witKey;
 var wolframKey = config.wolframKey;
