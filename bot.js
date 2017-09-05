@@ -1,3 +1,6 @@
+// filesystem node
+var fs = require('fs');
+
 if (fs.existsSync('./config.json')) {
     var config = require("./config.json");
     var discordKey = config.discordKey;
