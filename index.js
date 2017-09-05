@@ -109,6 +109,7 @@ client.on("message", async message => {
   // respond with to call
   if (command === 'ask') {
     const sayMessage = args.join(" ");
+    console.log(sayMessage);
     clientWit.message(sayMessage, {}).then((data) => {
       var serverResponse = data;
       console.log(serverResponse.entities);
@@ -139,14 +140,18 @@ client.on("message", async message => {
               file: "https://i.imgur.com/xDarAVy.jpg"
           });
         }
-        else if (serverResponse.entities.meme[0].value === 'skyrim'){
-          message.channel.send("", {
-              file: "https://i.pinimg.com/736x/78/fb/39/78fb3994a9f0c2d23cdac300ad8f703b--skyrim-so-true.jpg"
-          });
-        }
-        else {
-          message.channel.send("IDK this meme yet", {
-              file: "http://i0.kym-cdn.com/entries/icons/original/000/023/033/image.jpeg"
+        else{
+          var memeLink = 'https://dankexpress.herokuapp.com/' + serverResponse.entities.meme[0].value;
+          request({
+              url: memeLink,
+              json: true
+          }, function (error, response, body) {
+              if (!error && response.statusCode === 200) {
+                //console.log(body) // Print the json response
+                var memeSearch = body.resp[Math.floor(Math.random() * body.resp.length)];
+                var imgSRC = memeSearch.src;
+                message.channel.send("", {file: imgSRC});
+              }
           });
         }
       }
