@@ -10,18 +10,24 @@ if (fs.existsSync('./config.json')) {
     var witKey = config.witKey;
     var wolframKey = config.wolframKey;
     var giphyKey = config.giphyKey;
+    var youtubeKey = config.youtubeKey;
 }
 else {
   var discordKey = process.env.discordKey;
   var witKey = process.env.witKey;
   var wolframKey = process.env.wolframKey;
   var giphyKey = process.env.giphyKey;
+  var youtubeKey = process.env.youtubeKey;
 }
 
 // discord
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.login(discordKey);
+
+// discord music
+var bot = require("discord-music-bot");
+bot.setYoutubeKey(youtubeKey);
 
 // wit ai
 const Wit = require('node-wit').Wit;
@@ -57,6 +63,19 @@ client.on("guildDelete", guild => {
   client.user.setGame(`on ${client.guilds.size} servers`);
 });
 
+client.on('guildMemberAdd', member => {
+  // Send the message to a designated channel on a server:
+  const channel = member.guild.channels.find('name', 'member-log');
+  // Do nothing if the channel wasn't found on this server
+  if (!channel) return;
+  // Send the message, mentioning the member
+  channel.send(`Welcome to the server, ${member}`);
+});
+
+
+
+
+
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
 
@@ -75,8 +94,8 @@ client.on("message", async message => {
   const args = message.content.slice(1).trim().split(/ +/g);
   const command = args.shift().toLowerCase();
 
-  // Let's go with a few common example commands! Feel free to delete or change those.
 
+  // ping command
   if(command === "ping") {
     // Calculates ping between sending a message and editing it, giving a nice round-trip latency.
     // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
@@ -85,6 +104,7 @@ client.on("message", async message => {
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
   }
 
+  // echo command
   if(command === "say") {
     // makes the bot say something and delete the message. As an example, it's open to anyone to use.
     // To get the "message" itself we join the `args` back into a string with spaces:
@@ -107,6 +127,7 @@ client.on("message", async message => {
       message.reply("Your not an admin :(")
     }
   }
+
 
 
   // respond with to call
