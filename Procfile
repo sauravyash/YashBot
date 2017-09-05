@@ -1,2 +1,2 @@
-worker: node index.js
-worker: node bot.js
+talk: node index.js
+music: node bot.js
