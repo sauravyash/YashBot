@@ -179,6 +179,9 @@ client.on("message", async message => {
         else if (serverResponse.entities.insult[0].value === 'terrible') {
           var botResponse = "Do your parents even realize they’re living proof that two wrongs don’t make a right?";
         }
+        else {
+          var botResponse = randomInsult();
+        }
       }
       else if (serverResponse.entities.bye !== undefined){
         var botResponse = "See Ya Later";
@@ -251,8 +254,16 @@ client.on("message", async message => {
   }
 });
 
-function ping() {
-
+function randomInsult() {
+    var bodyPart = ["face", "foot", "nose", "hand", "head"];
+    var adjective = ["hairy and", "extremely", "insultingly", "astonishingly"];
+    var adjectiveTwo = ["stupid", "gigantic", "fat", "horrid", "scary"];
+    var animal = ["baboon", "sasquatch", "sloth", "naked cat", "warthog"];
+    var bodyPart = bodyPart[Math.floor(Math.random() * 5)];
+    var adjective = adjective[Math.floor(Math.random() * 4)];
+    var adjectiveTwo = adjectiveTwo[Math.floor(Math.random() * 5)];
+    var animal = animal[Math.floor(Math.random() * 5)];
+    return "Your" + " " + bodyPart + " " + "is more" + " " + adjective + " " + adjectiveTwo + " " + "than a" + " " + animal + "'s" + " " + bodyPart + ".";
 }
 
 
