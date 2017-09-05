@@ -1,28 +1,39 @@
 // filesystem node
-//var fs = require('fs');
-// keys
-// var conf = require("./config.json");
-// heroku config vars
-// var conf = process.env;
+var fs = require('fs');
+
+// declare key vars
+var discordKey, witKey, wolframKey;
+
+if (fs.existsSync('./config.json')) {
+    var config = require("./config.json");
+    var discordKey = config.discordKey;
+    var witKey = config.witKey;
+    var wolframKey = config.wolframKey;
+}
+else {
+  var discordKey = process.env.discordKey;
+  var witKey = process.env.witKey;
+  var wolframKey = process.env.wolframKey;
+}
 
 // discord
 const Discord = require('discord.js');
 const client = new Discord.Client();
-client.login(process.env.discordKey);
+client.login(discordKey);
 
 // wit ai
 const Wit = require('node-wit').Wit;
-const clientWit = new Wit({accessToken: process.env.witKey}); // public token i will change as often as possible
+const clientWit = new Wit({accessToken: witKey}); // public token i will change as often as possible
 var botResponse = "";
 
 // math js
 var math = require('mathjs');
 
 // wolfram alpha
-var wolfram = require('wolfram').createClient("7A4V76-29EG5L33J7");
+var wolfram = require('wolfram').createClient(wolframKey);
 
 // request http json plugin
-var request = require("request")
+var request = require("request");
 
 
 // when discord bot is ready
@@ -70,16 +81,6 @@ client.on("message", async message => {
     message.delete().catch(O_o=>{});
     const m = await message.channel.send("Ping?");
     m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
-    if (Math.round(client.ping) > 50) {
-      message.channel.send("", {
-          file: "https://pbs.twimg.com/media/CURozNvUAAAhHCF.png"
-      });
-    }
-    else {
-      message.channel.send("", {
-          file: "https://pbs.twimg.com/media/CURozNvUAAAhHCF.png"
-      });
-    }
   }
 
   if(command === "say") {
@@ -101,7 +102,7 @@ client.on("message", async message => {
       message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
     }
     else {
-      return message.reply("Your not an admin :(")
+      message.reply("Your not an admin :(")
     }
   }
 
@@ -249,6 +250,11 @@ client.on("message", async message => {
     return;
   }
 });
+
+function ping() {
+
+}
+
 
 function toTitleCase(str)
 {
