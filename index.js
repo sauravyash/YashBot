@@ -191,19 +191,23 @@ client.on("message", async message => {
           });
         }
         else{
-          var memeLink = 'https://dankexpress.herokuapp.com/' + serverResponse.entities.meme[0].value;
-          request({
-              url: memeLink,
-              json: true
-          }, function (error, response, body) {
-              if (!error && response.statusCode === 200) {
-                //console.log(body) // Print the json response
-                var memeSearch = body.resp[Math.floor(Math.random() * body.resp.length)];
-                var imgSRC = memeSearch.src;
-                console.log(imgSRC);
-                message.channel.send("", {file: imgSRC});
-              }
+          var memeLink = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyDgMb2teWCQSSol-HeiaPEFWnCvC9Ppu3Y&prettyPrint=false&cx=015733018857002235909:vjoqkli6ag0&searchType=image&q=' + serverResponse.entities.meme[0].value + ' meme';
+          message.channel.send("Loading...").then((msg)=>{
+            request({
+                url: memeLink,
+                json: true
+            }, function (error, response, body) {
+                if (!error && response.statusCode === 200) {
+                  console.log(body) // Print the json response
+                  var memeSearch = body.items[0]; //Math.floor(Math.random() * 10)];
+                  var imgSRC = memeSearch.link;
+                  console.log(imgSRC);
+                  msg.delete();
+                  message.channel.send("", {file: imgSRC});
+                }
+            });
           });
+
         }
       }
       else if (serverResponse.entities.math_term !== undefined) {
