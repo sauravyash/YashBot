@@ -124,16 +124,25 @@ client.on("message", async message => {
       message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
     }
     else {
-      message.reply("Your not an admin :(")
+      message.reply("Your not an admin (you need to have the 'Admin' Tag)")
     }
   }
 
-
+  if (command === 'help') {
+    message.reply("The music commands have been PM'd to you, The Music Bot was made by Jagrosh (Github). Type !about for more info");
+    message.channel.send("🔘 !ping - Checks the latency of connection to chat");
+    message.channel.send("🔘 !ask - sends query to wit.ai artificial intelligence. It can do math (using math.js). You can also ask who and what questions (!ask who is Rich Chigga) This May Not Work Sometimes!!")
+    message.channel.send("🔘 !say - echo statement")
+    message.channel.send("🔘 !delete x - Delete Messages (x being the number of messages you want to delete)")
+  }
 
   // respond with to call
   if (command === 'ask') {
     const sayMessage = args.join(" ");
     console.log(sayMessage);
+    if (sayMessage === '') {
+      message.react("❓")
+    }
     clientWit.message(sayMessage, {}).then((data) => {
       var serverResponse = data;
       console.log(serverResponse.entities);
