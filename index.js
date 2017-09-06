@@ -191,7 +191,7 @@ client.on("message", async message => {
           });
         }
         else{
-          var memeLink = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyDgMb2teWCQSSol-HeiaPEFWnCvC9Ppu3Y&prettyPrint=false&cx=015733018857002235909:vjoqkli6ag0&searchType=image&q=' + serverResponse.entities.meme[0].value + ' meme';
+          var memeLink = 'https://www.googleapis.com/customsearch/v1?key=AIzaSyDgMb2teWCQSSol-HeiaPEFWnCvC9Ppu3Y&prettyPrint=false&cx=015733018857002235909:vjoqkli6ag0&searchType=image&q=' + sayMessage;
           message.channel.send("Loading...").then((msg)=>{
             request({
                 url: memeLink,
@@ -199,7 +199,7 @@ client.on("message", async message => {
             }, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                   console.log(body) // Print the json response
-                  var memeSearch = body.items[0]; //Math.floor(Math.random() * 10)];
+                  var memeSearch = body.items[Math.floor(Math.random() * 10)];
                   var imgSRC = memeSearch.link;
                   console.log(imgSRC);
                   msg.delete();
