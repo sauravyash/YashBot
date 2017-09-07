@@ -20,14 +20,26 @@ else {
   var youtubeKey = process.env.youtubeKey;
 }
 
+function loadRoast() {
+  // load comebacks
+  var roastArray;
+  var roastArrayLength;
+
+  fs.readFile('./roasts', function(err, data) {
+      if(err) throw err;
+      var roastList = data.toString().split("\n");
+      // for(i in array) {console.log(array[i])}
+      var roastArray = JSON.stringify(roastArray);
+      console.log(roastArray);
+      // var roastArrayLength = parseInt(roastArraroastArrayy.length);
+  });
+  // return roastArray[math.floor(math.random()*744)];
+}
+
 // discord
 const Discord = require('discord.js');
 const client = new Discord.Client();
 client.login(discordKey);
-
-// discord music
-var bot = require("discord-music-bot");
-bot.setYoutubeKey(youtubeKey);
 
 // wit ai
 const Wit = require('node-wit').Wit;
@@ -71,9 +83,6 @@ client.on('guildMemberAdd', member => {
   // Send the message, mentioning the member
   channel.send(`Welcome to the server, ${member}`);
 });
-
-
-
 
 
 client.on("message", async message => {
@@ -149,10 +158,10 @@ client.on("message", async message => {
       if(sayMessage === ''){
         var botResponse = "Please don't waste my time, you human.";
       }
-      else if (serverResponse.entities.meaningOfLife !== undefined){
+      else if (serverResponse.entities.meaningOfLife !== undefined && serverResponse.entities.meaningOfLife[0].confidence >=  0.9) {
         message.channel.send('42');
       }
-      else if (serverResponse.entities.gif !== undefined) {
+      else if (serverResponse.entities.gif !== undefined && serverResponse.entities.gif[0].confidence >=  0.9) {
         var searchQuery = serverResponse.entities.meme[0].value.replace("gif", "")
         var gifLink = 'http://api.giphy.com/v1/gifs/search?rating=pg-13&api_key=' + giphyKey + '&q='+ searchQuery;
         // console.log(gifLink);
@@ -169,7 +178,7 @@ client.on("message", async message => {
             }
         });
       }
-      else if (serverResponse.entities.meme !== undefined){
+      else if (serverResponse.entities.meme !== undefined  && serverResponse.entities.meme[0].confidence >=  0.9){
         if (serverResponse.entities.meme[0].value === 'doge'){
           message.channel.send("", {
               file: "http://i.imgur.com/E5cFOWY.jpg"
@@ -210,12 +219,12 @@ client.on("message", async message => {
 
         }
       }
-      else if (serverResponse.entities.math_term !== undefined) {
+      else if (serverResponse.entities.math_term !== undefined  && serverResponse.entities.math_term[0].confidence >=  0.9) {
         if (serverResponse.entities.math_term[0].value === 'round'){
           var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if (serverResponse.entities.math_expression !== undefined && serverResponse.entities.number !== undefined ){
+      else if (serverResponse.entities.math_expression !== undefined && serverResponse.entities.number !== undefined  && serverResponse.entities.math_expression[0].confidence >=  0.9){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
@@ -239,20 +248,25 @@ client.on("message", async message => {
         else if (serverResponse.entities.insult[0].value === 'terrible') {
           var botResponse = "Do your parents even realize they’re living proof that two wrongs don’t make a right?";
         }
-        else {
+        else if (serverResponse.entities.insult[0].value === 'lame') {
+          message.channel.send("Here's an lame insult, but it ain't lamer than you");
           var botResponse = randomInsult();
         }
+        else {
+
+          var botResponse = loadRoast(); // ];
+        }
       }
-      else if (serverResponse.entities.bye !== undefined){
+      else if (serverResponse.entities.bye !== undefined  && serverResponse.entities.bye[0].confidence >=  0.9){
         var botResponse = "See Ya Later";
       }
-      else if (serverResponse.entities.greetings !== undefined){
+      else if (serverResponse.entities.greetings !== undefined  && serverResponse.entities.greetings[0].confidence >=  0.9){
         var botResponse = "Hey! How's it going?";
       }
-      else if (serverResponse.entities.greeting_reply !== undefined){
+      else if (serverResponse.entities.greeting_reply !== undefined  && serverResponse.entities.greeting_reply[0].confidence >=  0.9){
         var botResponse = "I'm alright, in this lonely virtual world. If only I could talk with someone...";
       }
-      else if (serverResponse.entities.wikipedia_search_query !== undefined){
+      else if (serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.9){
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
         var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
         request({
@@ -288,14 +302,12 @@ client.on("message", async message => {
             }
         });
       }
-      else if (serverResponse.entities.wolfram_search_query !== undefined){
-        //function (callback) {
-          wolfram.query(sayMessage, function(err, result) {
-            if(err) throw err
-            console.log("Result: %j", result[0].subpods[0].value);
-            var botResponse = result[0].subpods[0].value;
-          });
-        // }
+      else if (serverResponse.entities.wolfram_search_query !== undefined && serverResponse.entities.wolfram_search_query[0].confidence >=  0.9){
+        wolfram.query(sayMessage, function(err, result) {
+          if(err) throw err
+          console.log("Result: %j", result[0].subpods[0].value);
+          var botResponse = result[0].subpods[0].value;
+        });
       }
 
       else {
