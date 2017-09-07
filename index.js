@@ -33,7 +33,7 @@ function loadRoast() {
       console.log(roastArray);
       // var roastArrayLength = parseInt(roastArraroastArrayy.length);
   });
-  // return roastArray[math.floor(math.random()*744)];
+  return '' + roastArray[math.floor(math.random()*744)];
 }
 
 // discord
@@ -253,7 +253,6 @@ client.on("message", async message => {
           var botResponse = randomInsult();
         }
         else {
-
           var botResponse = loadRoast(); // ];
         }
       }
