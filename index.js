@@ -1,3 +1,6 @@
+// TO DO
+// what is your name in ask
+
 // filesystem node
 var fs = require('fs');
 
@@ -265,7 +268,42 @@ client.on("message", async message => {
       else if (serverResponse.entities.greeting_reply !== undefined  && serverResponse.entities.greeting_reply[0].confidence >=  0.9){
         var botResponse = "I'm alright, in this lonely virtual world. If only I could talk with someone...";
       }
-      else if (serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.9){
+      else if (serverResponse.entities.wolfram_term !== undefined && serverResponse.entities.wolfram_term[0].confidence >=  0.9){
+        wolfram.query(sayMessage, function(err, result) {
+          if(err) throw err
+          // console.log(result);
+          //console.log(require('util').inspect(result, { depth: null }));
+          // console.log(result.length);
+
+          if(result !== undefined) {
+            var n = 0;
+            while (n<result.length){
+              var responseData = result[n];
+              // console.log(responseData);
+              if (responseData.title !== undefined && responseData.title === 'Map'){
+                var map = responseData.subpods[0].image;
+              }
+              if (responseData.title !== undefined && responseData.title === 'Result'){
+                var info = responseData.subpods[0].value;
+              }
+              if (responseData.title !== undefined && responseData.title === 'Input interpretation'){
+                var title = responseData.subpods[0].value;
+              }
+              n++
+            }
+            message.channel.send(title.replace('\n',' ') + '\n' + info.replace('\n',' '));
+            if(map !== undefined) {
+              message.channel.send(map);
+            }
+          }
+
+          else {
+            var botResponse = 'The results never came back. :('
+          }
+          console.log(botResponse);
+        })
+      }
+      else if (serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.92){
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
         var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
         request({
@@ -299,13 +337,6 @@ client.on("message", async message => {
                 message.channel.send("I don't know what " + wikiTitle + " means.");
               }
             }
-        });
-      }
-      else if (serverResponse.entities.wolfram_search_query !== undefined && serverResponse.entities.wolfram_search_query[0].confidence >=  0.9){
-        wolfram.query(sayMessage, function(err, result) {
-          if(err) throw err
-          console.log("Result: %j", result[0].subpods[0].value);
-          var botResponse = result[0].subpods[0].value;
         });
       }
 
