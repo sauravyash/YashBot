@@ -1,5 +1,6 @@
 # YashBot
 A Conversation bot for Discord
+![Node Dependencies](https://david-dm.org/sauravyash/YashBot.svg)
 
 ## Add This Discord Bot
 https://discordapp.com/oauth2/authorize?client_id=354477152114180097&scope=bot&permissions=37223488
