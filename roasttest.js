@@ -2,8 +2,7 @@
 var fs = require('fs');
 var math = require('mathjs');
 
-var roastArray;
-var roastArrayLength;
+var roastArray, roastArrayLength;
 
 function loadRoast() {
   // load comebacks  var roastArray;var roastArrayLength;

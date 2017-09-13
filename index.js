@@ -4,6 +4,10 @@
 // filesystem node
 var fs = require('fs');
 
+// moment js for time
+var moment = require('moment');
+var moment = require('moment-timezone');
+
 // declare key vars
 var discordKey, witKey, wolframKey, giphyKey;
 
@@ -58,11 +62,17 @@ var wolfram = require('wolfram').createClient(wolframKey);
 // request http json plugin
 var request = require("request");
 
+//load string node plugin
+var S = require('string');
+
+// set yash to my discord user
 
 // when discord bot is ready
 client.on('ready', () => {
   console.log('I am ready!');
 });
+
+
 
 // when bot joins a gulild
 client.on("guildCreate", guild => {
@@ -86,7 +96,6 @@ client.on('guildMemberAdd', member => {
   // Send the message, mentioning the member
   channel.send(`Welcome to the server, ${member}`);
 });
-
 
 client.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
@@ -128,7 +137,7 @@ client.on("message", async message => {
   }
 
   //delete last message
-  if(command === 'delete') {
+  if(command === 'clearchat') {
     const sayMessage = args.join(" ");
     let modRole = message.guild.roles.find("name", "Admin");
     if(message.member.roles.has(modRole.id)) {
@@ -141,11 +150,37 @@ client.on("message", async message => {
   }
 
   if (command === 'help') {
-    message.reply("The music commands have been PM'd to you, The Music Bot was made by Jagrosh (Github). Type !about for more info");
-    message.channel.send("🔘 !ping - Checks the latency of connection to chat");
-    message.channel.send("🔘 !ask - sends query to wit.ai artificial intelligence. It can do math (using math.js). You can also ask who and what questions (!ask who is Rich Chigga) This May Not Work Sometimes!!")
-    message.channel.send("🔘 !say - echo statement")
-    message.channel.send("🔘 !delete x - Delete Messages (x being the number of messages you want to delete)")
+    //message.reply("[This bot is on github](https://github.com/sauravyash/YashBot) if you want to self host");
+    // message.channel.send("```• !ping - Checks the latency of connection to chat\n\n• !ask - sends query to wit.ai artificial intelligence. It can do math (using math.js). You can also ask who and what questions (!ask who is Rich Chigga) This May Not Work Sometimes!\n\n• !say - echo statement\n\n• !delete x - Delete Messages (x being the number of messages you want to delete)```");
+    message.channel.send({
+      embed: {
+        color: 1146986,
+        description: "[This is a Discord Chatbot](https://github.com/sauravyash/yashbot) made by [sauravyash](https://github.com/sauravyash)",
+        fields: [
+          {
+            name: "**!ping**",
+            value: "Checks the latency of connection to chat."
+          },
+          {
+            name: "!ask",
+            value: " \b\t•\tSends query to wit.ai artificial intelligence.\n\t•\tIt can do math (using math.js).\n\t•\tYou can also ask who and what questions (!ask who is Rich Chigga)\n*This May Not Work Sometimes!*"
+          },
+          {
+            name: "!say",
+            value: "Echo statement after the command"
+          },
+          {
+            name: "!delete #",
+            value: "Delete Messages (# being the number of messages you want to delete)"
+          }
+        ],
+        timestamp: moment().tz("Australia/Sydney").format(),
+        footer: {
+          icon_url: client.user.avatarURL,
+          text: "©sauravyash"
+        }
+      }
+    });
   }
 
   // respond with to call
@@ -268,39 +303,55 @@ client.on("message", async message => {
       else if (serverResponse.entities.greeting_reply !== undefined  && serverResponse.entities.greeting_reply[0].confidence >=  0.9){
         var botResponse = "I'm alright, in this lonely virtual world. If only I could talk with someone...";
       }
+      else if (serverResponse.entities.weather !== undefined  && serverResponse.entities.weather[0].confidence >=  0.7) {
+        // removeTheseWords = ['Weather','weather', 'in', 'what', 'is']
+        city = S(sayMessage).strip('Weather', 'weather', 'in', 'what', 'is', 'wether', 'wather', 'wethar', 'wetar', 'the').s;
+        weatherLink = 'http://api.openweathermap.org/data/2.5/weather?APPID=1ff09589fab867151c2426cc929d0cbf&q='+ city
+        console.log(city);
+        request({
+            url: weatherLink,
+            json: true
+        }, function (error, response, body) {
+            if (!error && response.statusCode === 200) {
+              console.log(body) // Print the json response
+
+              message.channel.send(body.name + ' has a ' + body.weather[0].description + ', and the temperature is '+ body.main.temp +'K (' + (body.main.temp - 273.15) + '°C or ' + ~~(body.main.temp * 1.8 - 459.67) + '°F).')
+
+              message.channel.send( 'Other Details:\n\t•\tPressure: ' + body.main.pressure + '\n\t•\tHumidity: ' + body.main.humidity + "\n\t•\tToday's Sunrise: "+ body.sys.sunrise + "\n\t•\tTodays Sunset: " + body.sys.sunset)
+            }
+        });
+      }
       else if (serverResponse.entities.wolfram_term !== undefined && serverResponse.entities.wolfram_term[0].confidence >=  0.9){
         wolfram.query(sayMessage, function(err, result) {
           if(err) throw err
-          // console.log(result);
+          console.log(result);
           //console.log(require('util').inspect(result, { depth: null }));
           // console.log(result.length);
-
-          if(result !== undefined) {
+          if(result !== undefined && result.length>1) {
             var n = 0;
+            // scan through results
             while (n<result.length){
               var responseData = result[n];
-              // console.log(responseData);
-              if (responseData.title !== undefined && responseData.title === 'Map'){
+              console.log(responseData);
+              if (responseData.title === 'Map'){
                 var map = responseData.subpods[0].image;
               }
-              if (responseData.title !== undefined && responseData.title === 'Result'){
+              if (responseData.title === 'Result'){
                 var info = responseData.subpods[0].value;
               }
-              if (responseData.title !== undefined && responseData.title === 'Input interpretation'){
-                var title = responseData.subpods[0].value;
+              if (responseData.title === 'Input interpretation'){
+                var title = responseData.subpods[0].value.replace('\n',' ');
               }
               n++
             }
-            message.channel.send(title.replace('\n',' ') + '\n' + info.replace('\n',' '));
+            message.channel.send(title + '\n' + result[1].subpods[0].value);
             if(map !== undefined) {
               message.channel.send(map);
             }
-          }
-
-          else {
+          } else {
             var botResponse = 'The results never came back. :('
           }
-          console.log(botResponse);
+          // console.log(botResponse);
         })
       }
       else if (serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.92){
