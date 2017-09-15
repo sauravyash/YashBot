@@ -29,18 +29,10 @@ else {
 
 function loadRoast() {
   // load comebacks
-  var roastArray;
+  var roastArray = fs.readFileSync("./roasts.txt").toString().split('\n');
   var roastArrayLength;
-
-  fs.readFile('./roasts', function(err, data) {
-      if(err) throw err;
-      var roastList = data.toString().split("\n");
-      // for(i in array) {console.log(array[i])}
-      var roastArray = JSON.stringify(roastArray);
-      console.log(roastArray);
-      // var roastArrayLength = parseInt(roastArraroastArrayy.length);
-  });
-  return '' + roastArray[math.floor(math.random()*744)];
+  pickedInsult = roastArray[math.floor(math.random()*744)];
+  return '' + pickedInsult;
 }
 
 // discord
@@ -163,7 +155,7 @@ client.on("message", async message => {
           },
           {
             name: "!ask",
-            value: " \b\t•\tSends query to wit.ai artificial intelligence.\n\t•\tIt can do math (using math.js).\n\t•\tYou can also ask who and what questions (!ask who is Rich Chigga)\n*This May Not Work Sometimes!*"
+            value: " \bSends query to wit.ai artificial intelligence.\n\t•\tIt can do math (!ask 57*21 || !ask sin(23) || !ask round 15.454545).\n\t•\tYou can also ask who and what questions (!ask who is Rich Chigga)\n\t\t ** This May Not Work Sometimes!**\n\t•\tWeather works too! (!ask weather sydney)\n\t•\tMeme Search with (!ask communism meme)\n\t•\tGIFs too cause why not. (!ask cat gif)"
           },
           {
             name: "!say",
@@ -246,11 +238,19 @@ client.on("message", async message => {
             }, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                   console.log(body) // Print the json response
-                  var memeSearch = body.items[Math.floor(Math.random() * 10)];
+                  if(body.items !== undefined){
+                    var memeSearch = body.items[Math.floor(Math.random() * 10)];
+                    msg = ""
+                  }
+                  else {
+                    var memeSearch = 'https://ih0.redbubble.net/image.218547668.2032/pp,550x550.jpg';
+                    msg = "Boi, IDK dis meme, maybe spell it correctly"
+                  }
+
                   var imgSRC = memeSearch.link;
                   console.log(imgSRC);
-                  msg.delete();
-                  message.channel.send("", {file: imgSRC});
+                  msg.delete(20).then(msg => console.log(`Deleted message from ${msg.author}`)).catch(console.error);;
+                  message.channel.send(msg, {file: imgSRC});
                 }
             });
           });
@@ -262,7 +262,7 @@ client.on("message", async message => {
           var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if (serverResponse.entities.math_expression !== undefined || && serverResponse.entities.number !== undefined  && serverResponse.entities.math_expression[0].confidence >=  0.9){
+      else if (serverResponse.entities.math_expression !== undefined || serverResponse.entities.mathSymbol !== undefined ){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
@@ -314,10 +314,11 @@ client.on("message", async message => {
         }, function (error, response, body) {
             if (!error && response.statusCode === 200) {
               console.log(body) // Print the json response
-
+              sunrise = moment.unix(body.sys.sunrise).format("LTS");
+              sunset = moment.unix(body.sys.sunset).format("LTS");
               message.channel.send(body.name + ' has a ' + body.weather[0].description + ', and the temperature is '+ body.main.temp +'K (' + (body.main.temp - 273.15) + '°C or ' + ~~(body.main.temp * 1.8 - 459.67) + '°F).')
 
-              message.channel.send( 'Other Details:\n\t•\tPressure: ' + body.main.pressure + '\n\t•\tHumidity: ' + body.main.humidity + "\n\t•\tToday's Sunrise: "+ body.sys.sunrise + "\n\t•\tTodays Sunset: " + body.sys.sunset)
+              message.channel.send( 'Other Details:\n\t•\tPressure: ' + body.main.pressure + '\n\t•\tHumidity: ' + body.main.humidity + "\n\t•\tToday's Sunrise: "+ sunrise + "\n\t•\tTodays Sunset: " + sunset)
             }
         });
       }
@@ -386,16 +387,15 @@ client.on("message", async message => {
               }
               else {
                 message.channel.send("I don't know what " + wikiTitle + " means.");
+                message.react("❓");
               }
             }
         });
       }
-
       else {
-        var botResponse = 'I did not understand what you asked me.'
-        message.channel.send("ಠ_ಠ", {
-            file: "http://weknowmemes.com/wp-content/uploads/2011/09/look-of-disapproval.jpg"
-        });
+        message.react("❓");
+        var botResponse = 'I did not understand what you asked me. ಠ_ಠ'
+        // message.channel.send("", {file: "http://weknowmemes.com/wp-content/uploads/2011/09/look-of-disapproval.jpg"});
       }
       //console.log(serverResponse.entities);
       // console.log(botResponse);
