@@ -192,7 +192,7 @@ client.on("message", async message => {
         message.channel.send('42');
       }
       else if (serverResponse.entities.gif !== undefined && serverResponse.entities.gif[0].confidence >=  0.9) {
-        var searchQuery = serverResponse.entities.meme[0].value.replace("gif", "")
+        var searchQuery = sayMessage.replace("gif", "")
         var gifLink = 'http://api.giphy.com/v1/gifs/search?rating=pg-13&api_key=' + giphyKey + '&q='+ searchQuery;
         // console.log(gifLink);
         request({
@@ -249,10 +249,10 @@ client.on("message", async message => {
 
                   var imgSRC = memeSearch.link;
                   console.log(imgSRC);
-                  msg.delete(20).then(msg => console.log(`Deleted message from ${msg.author}`)).catch(console.error);;
                   message.channel.send(msg, {file: imgSRC});
                 }
             });
+            msg.delete(20).then(msg => console.log(`Deleted message from ${msg.author}`)).catch(console.error);;
           });
 
         }
