@@ -141,7 +141,7 @@ client.on("message", async message => {
       message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
     }
     else {
-      message.reply("Your not an admin (you need to have the 'Admin' Tag)")
+      message.reply("You're not an admin (you need to have the 'Admin' Tag)")
     }
   }
 
