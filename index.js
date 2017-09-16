@@ -133,7 +133,11 @@ client.on("message", async message => {
     const sayMessage = args.join(" ");
     let modRole = message.guild.roles.find("name", "Admin");
     if(message.member.roles.has(modRole.id)) {
-      let messagecount = parseInt(sayMessage);
+      var messagecount = parseInt(sayMessage);
+      if (messagecount === NaN){
+        var messagecount= 1 ;
+      }
+      console.log(messagecount);
       message.channel.fetchMessages({limit: messagecount}).then(messages => message.channel.bulkDelete(messages));
     }
     else {
@@ -142,8 +146,6 @@ client.on("message", async message => {
   }
 
   if (command === 'help') {
-    //message.reply("[This bot is on github](https://github.com/sauravyash/YashBot) if you want to self host");
-    // message.channel.send("```• !ping - Checks the latency of connection to chat\n\n• !ask - sends query to wit.ai artificial intelligence. It can do math (using math.js). You can also ask who and what questions (!ask who is Rich Chigga) This May Not Work Sometimes!\n\n• !say - echo statement\n\n• !delete x - Delete Messages (x being the number of messages you want to delete)```");
     message.channel.send({
       embed: {
         color: 1146986,
@@ -155,14 +157,14 @@ client.on("message", async message => {
           },
           {
             name: "!ask",
-            value: " \bSends query to wit.ai artificial intelligence.\n\t•\tIt can do math (!ask 57*21 || !ask sin(23) || !ask round 15.454545).\n\t•\tYou can also ask who and what questions (!ask who is Rich Chigga)\n\t\t ** This May Not Work Sometimes!**\n\t•\tWeather works too! (!ask weather sydney)\n\t•\tMeme Search with (!ask communism meme)\n\t•\tGIFs too cause why not. (!ask cat gif)"
+            value: " \bSends query to wit.ai artificial intelligence.\n\t•\tIt can do math (!ask 57*21 || !ask sin(23) || !ask round 15.454545).\n\t•\tYou can also ask who and what questions (!ask who is Rich Chigga) **BETA**\n\t•\tWeather works too! (!ask weather sydney)\n\t•\tMeme Search with (!ask communism meme)\n\t•\tGIFs too cause why not. (!ask cat gif)"
           },
           {
             name: "!say",
             value: "Echo statement after the command"
           },
           {
-            name: "!delete #",
+            name: "!clearchat #",
             value: "Delete Messages (# being the number of messages you want to delete)"
           }
         ],
