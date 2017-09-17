@@ -23,26 +23,23 @@ else {
   var youtubeKey = process.env.youtubeKey;
 }
 
-function loadRoast() {
-  // load comebacks
-  var roastArray;
-  var roastArrayLength;
+var roastList, daRoast;
 
-  fs.readFile('./roasts', function(err, data) {
+function loadRoast() {
+  fs.readFile('./roasts.txt', 'utf8', function(err, data) {
       if(err) throw err;
       var roastList = data.toString().split("\n");
-      // for(i in array) {console.log(array[i])}
-      var roastArray = JSON.stringify(roastArray);
-      console.log(roastArray);
-      // var roastArrayLength = parseInt(roastArraroastArrayy.length);
+      var daRoast = roastList[math.floor(math.random()*roastList.length)];
+      return daRoast;
+      console.log(daRoast);
   });
-  return '' + roastArray[math.floor(math.random()*744)];
 }
-
+// console.log('' + loadRoast());
+loadRoast()
 // discord
 const Discord = require('discord.js');
-const client = new Discord.Client();
-client.login(discordKey);
+const dClient = new Discord.Client();
+dClient.login(discordKey);
 
 // wit ai
 const Wit = require('node-wit').Wit;
@@ -60,25 +57,25 @@ var request = require("request");
 
 
 // when discord bot is ready
-client.on('ready', () => {
+dClient.on('ready', () => {
   console.log('I am ready!');
 });
 
 // when bot joins a gulild
-client.on("guildCreate", guild => {
+dClient.on("guildCreate", guild => {
   // This event triggers when the bot joins a guild.
   console.log(`New guild joined: ${guild.name} (id: ${guild.id}). This guild has ${guild.memberCount} members!`);
-  client.user.setGame(`on ${client.guilds.size} servers`);
+  dClient.user.setGame(`on ${dClient.guilds.size} servers`);
 });
 
 // when the bot is removed from a guild.
-client.on("guildDelete", guild => {
+dClient.on("guildDelete", guild => {
   // this event triggers when the bot is removed from a guild.
   console.log(`I have been removed from: ${guild.name} (id: ${guild.id})`);
-  client.user.setGame(`on ${client.guilds.size} servers`);
+  dClient.user.setGame(`on ${dClient.guilds.size} servers`);
 });
 
-client.on('guildMemberAdd', member => {
+dClient.on('guildMemberAdd', member => {
   // Send the message to a designated channel on a server:
   const channel = member.guild.channels.find('name', 'member-log');
   // Do nothing if the channel wasn't found on this server
@@ -88,7 +85,7 @@ client.on('guildMemberAdd', member => {
 });
 
 
-client.on("message", async message => {
+dClient.on("message", async message => {
   // This event will run on every single message received, from any channel or DM.
 
   // It's good practice to ignore other bots. This also makes your bot ignore itself
@@ -113,7 +110,7 @@ client.on("message", async message => {
     // The second ping is an average latency between the bot and the websocket server (one-way, not round-trip)
     message.delete().catch(O_o=>{});
     const m = await message.channel.send("Ping?");
-    m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(client.ping)}ms`);
+    m.edit(`Pong! Latency is ${m.createdTimestamp - message.createdTimestamp}ms. API Latency is ${Math.round(dClient.ping)}ms`);
   }
 
   // echo command
@@ -252,11 +249,13 @@ client.on("message", async message => {
           var botResponse = "Do your parents even realize they’re living proof that two wrongs don’t make a right?";
         }
         else if (serverResponse.entities.insult[0].value === 'lame') {
-          message.channel.send("Here's an lame insult, but it ain't lamer than you");
+          message.channel.send("Here's an lame insult, but it ain't lamer than youuu");
           var botResponse = randomInsult();
         }
         else {
-          var botResponse = loadRoast(); // ];
+          var roast = loadRoast();
+          // console.log(roast)
+          message.channel.send('roast: ' + roast);
         }
       }
       else if (serverResponse.entities.bye !== undefined  && serverResponse.entities.bye[0].confidence >=  0.9){
