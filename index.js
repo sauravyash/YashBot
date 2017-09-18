@@ -53,6 +53,8 @@ var wolfram = require('wolfram').createClient(wolframKey);
 
 // request http json plugin
 var request = require("request");
+// request in sync
+var requestSync = require('then-request');
 
 //load string node plugin
 var S = require('string');
@@ -316,11 +318,31 @@ client.on("message", async message => {
         }, function (error, response, body) {
             if (!error && response.statusCode === 200) {
               console.log(body) // Print the json response
-              sunrise = moment.unix(body.sys.sunrise).format("LTS");
-              sunset = moment.unix(body.sys.sunset).format("LTS");
-              message.channel.send(body.name + ' has a ' + body.weather[0].description + ', and the temperature is '+ body.main.temp +'K (' + (body.main.temp - 273.15) + '°C or ' + ~~(body.main.temp * 1.8 - 459.67) + '°F).')
+              var cityTZ = '';
+              tzLink = `https://maps.googleapis.com/maps/api/timezone/json?key=AIzaSyBTpyhKA9AgWxyYO8ZdMYzxkYdOUB4hgls&location=${body.coord.lat},${body.coord.lon}&timestamp=${body.dt}`;
+              utcSunrise = moment.unix(body.sys.sunrise).utc().toISOString();
+              utcSunset = moment.unix(body.sys.sunset).utc().toISOString();
+              cityName = body.name;
+              weatherDesc= body.weather[0].description;
+              cityTemp = body.main.temp;
+              cityPsi = body.main.pressure;
+              cityHumidity = body.main.humidity;
+              cityClouds = body.clouds.all;
 
-              message.channel.send( 'Other Details:\n\t•\tPressure: ' + body.main.pressure + '\n\t•\tHumidity: ' + body.main.humidity + "\n\t•\tToday's Sunrise: "+ sunrise + "\n\t•\tTodays Sunset: " + sunset)
+              requestSync('GET', tzLink).done(function (res) {
+                bodyString = res.body;
+                // console.log('body: '+body);
+                body = JSON.parse(bodyString);
+                cityTZ = body.timeZoneId;
+                // console.log(cityTZ);
+                sunrise = moment(utcSunrise).tz(cityTZ).format("hh:mm:ss A");
+                sunset = moment(utcSunset).tz(cityTZ).format("hh:mm:ss A");
+                //console.log('Sunrise: '+ sunrise);
+                // console.log('citytz: '+cityTZ);
+
+
+                message.channel.send(`${cityName} has a ${weatherDesc}, and the temperature is ${cityTemp}K (${~~(cityTemp - 273.15)}°C or ${~~(cityTemp * 1.8 - 459.67)}°F). \nOther Details:\n\t•\tPressure: ${cityPsi} psi\n\t•\tHumidity: ${cityHumidity}%\n\t•\tToday's Sunrise: ${sunrise} (Local Time)\n\t•\tToday's Sunset: ${sunset} (Local Time)\n\t•\tClouds: ${cityClouds}%`);
+              });
             }
         });
       }
