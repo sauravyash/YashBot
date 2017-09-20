@@ -1,1 +1,0 @@
-talk: node index.js
