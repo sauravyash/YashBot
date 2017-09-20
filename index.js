@@ -242,21 +242,26 @@ client.on("message", async message => {
             }, function (error, response, body) {
                 if (!error && response.statusCode === 200) {
                   console.log(body) // Print the json response
+                  newMsg = 'new msg';
+                  console.log('start');
                   if(body.items !== undefined){
-                    var memeSearch = body.items[Math.floor(Math.random() * 10)];
-                    msg = ""
+                    if(body.searchInformation.totalResults !== '0') {
+                      console.log('true');
+                      var memeSearch = body.items[Math.floor(Math.random() * 10)];
+                      var imgSRC = memeSearch.link;
+                      newMsg = "";
+                    }
                   }
                   else {
+                    console.log('false');
                     var memeSearch = 'https://ih0.redbubble.net/image.218547668.2032/pp,550x550.jpg';
-                    msg = "Boi, IDK dis meme, maybe spell it correctly"
+                    newMsg = "Boi, IDK dis meme, maybe spell it correctly";
                   }
-
-                  var imgSRC = memeSearch.link;
                   console.log(imgSRC);
-                  message.channel.send(msg, {file: imgSRC});
+                  message.channel.send(newMsg, {file: imgSRC});
                 }
             });
-            msg.delete(20).then(msg => console.log(`Deleted message from ${msg.author}`)).catch(console.error);;
+            msg.delete(200).then(msg => console.log(`Deleted message from ${msg.author}`)).catch(console.error);;
           });
 
         }
@@ -266,7 +271,7 @@ client.on("message", async message => {
           var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if (serverResponse.entities.math_expression !== undefined || serverResponse.entities.mathSymbol !== undefined ){
+      else if ((serverResponse.entities.math_expression !== undefined && serverResponse.entities.math_expression[0].confidence >=  0.9)||(serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.9)){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         } else {
@@ -291,7 +296,7 @@ client.on("message", async message => {
           var botResponse = "Do your parents even realize they’re living proof that two wrongs don’t make a right?";
         }
         else if (serverResponse.entities.insult[0].value === 'lame') {
-          message.channel.send("Here's an lame insult, but it ain't lamer than you");
+          message.reply("Here's an lame insult, but it ain't lamer than you");
           var botResponse = randomInsult();
         }
         else {
@@ -365,11 +370,11 @@ client.on("message", async message => {
                 var info = responseData.subpods[0].value;
               }
               if (responseData.title === 'Input interpretation'){
-                var title = responseData.subpods[0].value.replace('\n',' ');
+                var title = responseData.subpods[0].value;
               }
               n++
             }
-            message.channel.send(title + '\n' + result[1].subpods[0].value);
+            message.channel.send(S(toTitleCase(title)).strip('|').replace('\n', ' ') + '\n' + result[1].subpods[0].value);
             if(map !== undefined) {
               message.channel.send(map);
             }
@@ -379,7 +384,7 @@ client.on("message", async message => {
           // console.log(botResponse);
         })
       }
-      else if (serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.92){
+      else if (serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.9){
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
         var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
         request({
