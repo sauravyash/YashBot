@@ -275,17 +275,18 @@ client.on("message", async message => {
           var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
+      else if (serverResponse.entities.algebra !== undefined && serverResponse.entities.algebra[0].confidence >=  0.9){
+        wolfram.query(sayMessage, function(err, result) {
+          if(err) throw err
+          // console.log(result);
+          solution = result.filter(data => data.primary == true);
+          console.log(require('util').inspect(solution[0].subpods[0].value, { depth: null }));
+          message.channel.send(solution[0].subpods[0].value.replace('!=','≠'));
+        });
+      }
       else if ((serverResponse.entities.math_expression !== undefined && serverResponse.entities.math_expression[0].confidence >=  0.9)||(serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.9)){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
-        } else if (serverResponse.entities.algebra !== undefined && serverResponse.entities.algebra[0].confidence >=  0.9){
-          wolfram.query(sayMessage, function(err, result) {
-            if(err) throw err
-            // console.log(result);
-            solution = result.filter(data => data.primary == true);
-            console.log(require('util').inspect(solution[0].subpods[0].value, { depth: null }));
-            message.channel.send(solution[0].subpods[0].value);
-          });
         }
         else {
           var botResponse = math.eval(sayMessage);
