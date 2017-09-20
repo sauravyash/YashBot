@@ -275,7 +275,7 @@ client.on("message", async message => {
           var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if (serverResponse.entities.algebra !== undefined && serverResponse.entities.algebra[0].confidence >=  0.9){
+      else if (serverResponse.entities.algebra !== undefined && serverResponse.entities.algebra[0].confidence >=  0.8){
         wolfram.query(sayMessage, function(err, result) {
           if(err) throw err
           // console.log(result);
