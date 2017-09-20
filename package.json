@@ -1,0 +1,36 @@
+{
+  "name": "yashbot",
+  "version": "1.0.0",
+  "engines": {
+    "node": "8.4.x",
+    "npm": "5.4.x"
+  },
+  "description": "Discord Bot for chat",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Yash Agasti",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.108.0",
+    "bcrypt": "^1.0.3",
+    "bindings": "^1.3.0",
+    "discord-music-bot": "^2.3.0",
+    "discord.js": "^11.1.0",
+    "fs": "0.0.1-security",
+    "jsonfile": "^3.0.1",
+    "libxmljs": "^0.18.7",
+    "line-stream-util": "^1.2.0",
+    "mathjs": "^3.16.3",
+    "moment": "^2.18.1",
+    "moment-timezone": "^0.5.13",
+    "node-wit": "^4.3.0",
+    "path": "^0.12.7",
+    "string": "^3.3.3",
+    "then-request": "^4.1.0",
+    "wikijs": "^4.1.0",
+    "wolfram": "^0.3.4",
+    "yield": "0.0.6-8"
+  }
+}
