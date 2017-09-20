@@ -281,7 +281,7 @@ client.on("message", async message => {
           // console.log(result);
           solution = result.filter(data => data.primary == true);
           console.log(require('util').inspect(solution[0].subpods[0].value, { depth: null }));
-          message.channel.send(solution[0].subpods[0].value.replace('!=','≠'));
+          message.channel.send(solution[0].subpods[0].value.replace('!=','≠')+'\n'+solution[0].subpods[0].image);
         });
       }
       else if ((serverResponse.entities.math_expression !== undefined && serverResponse.entities.math_expression[0].confidence >=  0.9)||(serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.9)){
