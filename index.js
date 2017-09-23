@@ -185,7 +185,7 @@ client.on("message", async message => {
 
   // respond with to call
   if (command === 'ask') {
-    const sayMessage = S(args.join(" ")).strip('\n');
+    const sayMessage = args.join(" ").replace(/(\r\n|\n|\r)/gm,"");
     console.log(sayMessage);
     if (sayMessage === '') {
       message.react("❓")
@@ -272,35 +272,28 @@ client.on("message", async message => {
       }
       else if (serverResponse.entities.math_term !== undefined  && serverResponse.entities.math_term[0].confidence >=  0.9) {
         if (serverResponse.entities.math_term[0].value === 'round'){
-          var botResponse = math.round(parseInt(serverResponse.entities.number[0].value));
+          var botResponse = sayMessage + ' = ' +  math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if (serverResponse.entities.algebra !== undefined && serverResponse.entities.algebra[0].confidence >=  0.8){
-        wolfram.query(sayMessage, function(err, result) {
-          if(err) throw err
-          // console.log(result);
-          solution = result.filter(data => data.primary == true);
-          console.log(require('util').inspect(solution[0].subpods[0].value, { depth: null }));
-          message.channel.send(solution[0].subpods[0].value.replace('!=','≠')+'\n'+solution[0].subpods[0].image);
-        });
-      }
-      else if ((serverResponse.entities.math_expression !== undefined && serverResponse.entities.math_expression[0].confidence >=  0.9)||(serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.9)){
+      else if ((serverResponse.entities.math_expression !== undefined && serverResponse.entities.math_expression[0].confidence >=  0.9)||(serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.85)){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         }
         else {
-          var botResponse = math.eval(sayMessage);
+          var botResponse = sayMessage + ' = ' +  math.eval(sayMessage);
         }
       // console.log(serverResponse.entities);
       }
-      else if (serverResponse.entities.intent !== undefined){
+      else if (serverResponse.entities.number !== undefined && serverResponse.entities.number[0].confidence >=  0.99 && serverResponse.entities.mathSymbol === undefined) {
+        var botResponse = sayMessage + ' = ' + (~~(serverResponse.entities.number[0].value * 100) / 100) + ' (2 Decimal Places)';
+      }
+
+      else if (serverResponse.entities.insult !== undefined){
         if (serverResponse.entities.intent[0].value === 'ni') {
           var botResponse = 'https://www.youtube.com/watch?v=S9zeQMbGEPc&t=9&end=22';
           message.channel.send('Get Lost!');
         }
-      }
-      else if (serverResponse.entities.insult !== undefined){
-        if (serverResponse.entities.insult[0].value === 'stupid') {
+        else if (serverResponse.entities.insult[0].value === 'stupid') {
           var botResponse = "Remember when I asked for your opinion? Me neither.";
         }
         else if (serverResponse.entities.insult[0].value === 'retard') {
@@ -365,7 +358,7 @@ client.on("message", async message => {
             }
         });
       }
-      else if (serverResponse.entities.wolfram_term !== undefined && serverResponse.entities.wolfram_term[0].confidence >=  0.9){
+      else if (serverResponse.entities.wolfram_term !== undefined && serverResponse.entities.wolfram_term[0].confidence >=  0.8){
         wolfram.query(sayMessage, function(err, result) {
           if(err) throw err
           console.log(result);
@@ -388,7 +381,7 @@ client.on("message", async message => {
               }
               n++
             }
-            message.channel.send(S(toTitleCase(title)).strip('|').replace('\n', ' ') + '\n' + result[1].subpods[0].value);
+            message.channel.send(toTitleCase(title) + '\n' + result[1].subpods[0].value.replace(/\|/g, '\t'));
             if(map !== undefined) {
               message.channel.send(map);
             }
@@ -398,8 +391,10 @@ client.on("message", async message => {
           // console.log(botResponse);
         })
       }
-      else if ((serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.9)||(serverResponse.entities.question && serverResponse.entities.question[0].confidence >=  0.9)){
+
+      else if ((serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.9)||(serverResponse.entities.question !== undefined && serverResponse.entities.question[0].confidence >=  0.9)){
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
+        // console.log("query: " +S(sayMessage).split('what', 'who', 'is', 'why', '?'));
         var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
         request({
             url: wikiLink,
@@ -408,25 +403,27 @@ client.on("message", async message => {
             if (!error && response.statusCode === 200) {
               //console.log(body) // Print the json response
               // var dataJSON = ;
-              var dataJSON = body.query.search[0];
-              if (dataJSON !== undefined) {
-                var title = dataJSON.title;
-                var extract = dataJSON.extract;
-                message.channel.send(title);
-                var key = dataJSON.pageid;
-                request({
-                    url: 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&pageids=' + key,
-                    json: true
-                }, function (error, response, body) {
-                    if (!error && response.statusCode === 200) {
-                      var tmpJSON = Object.entries(body.query.pages);
-                      var dataJSON = tmpJSON[0];
-                      var extract = dataJSON[1].extract;
-                      message.channel.send(extract.substring(0, 300) + '...');
-                      // console.log(dataJSON[1].extract);
-                    }
-                });
-                // console.log(dataJSON[1].extract);
+              if(body.query !== undefined){
+                var dataJSON = body.query.search[0];
+                if (dataJSON !== undefined) {
+                  var title = dataJSON.title;
+                  var extract = dataJSON.extract;
+                  // message.channel.send(title);
+                  var key = dataJSON.pageid;
+                  request({
+                      url: 'https://en.wikipedia.org/w/api.php?format=json&action=query&prop=extracts&exintro=&explaintext=&pageids=' + key,
+                      json: true
+                  }, function (error, response, body) {
+                      if (!error && response.statusCode === 200) {
+                        var tmpJSON = Object.entries(body.query.pages);
+                        var dataJSON = tmpJSON[0];
+                        var extract = dataJSON[1].extract;
+                        message.channel.send(title + '\n' + extract.substring(0, 300) + '...');
+                        // console.log(dataJSON[1].extract);
+                      }
+                  });
+                  // console.log(dataJSON[1].extract);
+                }
               }
               else {
                 message.channel.send("I don't know what " + wikiTitle + " means.");
