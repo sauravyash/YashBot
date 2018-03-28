@@ -275,7 +275,7 @@ client.on("message", async message => {
           var botResponse = sayMessage + ' = ' +  math.round(parseInt(serverResponse.entities.number[0].value));
         }
       }
-      else if ((serverResponse.entities.math_expression !== undefined && serverResponse.entities.math_expression[0].confidence >=  0.9)||(serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.85)){
+      else if (serverResponse.entities.mathSymbol !== undefined && serverResponse.entities.mathSymbol[0].confidence >=  0.85){
         if (sayMessage === '0/0') {
           var botResponse = 'Imagine that you have zero cookies and you split them evenly among zero friends. How many cookies does each person get? See? It doesn’t make sense. And Cookie Monster is sad that there are no cookies, and you are sad that you have no friends';
         }
