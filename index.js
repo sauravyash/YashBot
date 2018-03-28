@@ -321,7 +321,7 @@ client.on("message", async message => {
       }
       else if (serverResponse.entities.weather !== undefined  && serverResponse.entities.weather[0].confidence >=  0.7) {
         // removeTheseWords = ['Weather','weather', 'in', 'what', 'is']
-        city = S(sayMessage).strip('Weather', 'weather', 'in', 'what', 'is', 'wether', 'wather', 'wethar', 'wetar', 'the').s;
+        city = S(sayMessage).strip('Weather', 'weather', 'in', 'what', 'is', 'wether', 'wather', 'wethar', 'wetar', 'the', 'temp', 'tmp', ).s;
         weatherLink = 'http://api.openweathermap.org/data/2.5/weather?APPID=1ff09589fab867151c2426cc929d0cbf&q='+ city
         console.log(city);
         request({
@@ -392,7 +392,7 @@ client.on("message", async message => {
         })
       }
 
-      else if ((serverResponse.entities.wikipedia_search_query !== undefined && serverResponse.entities.wikipedia_search_query[0].confidence >=  0.9)||(serverResponse.entities.question !== undefined && serverResponse.entities.question[0].confidence >=  0.9)){
+      else if (serverResponse.entities.question !== undefined && serverResponse.entities.question[0].confidence >=  0.9){
         var wikiTitle = serverResponse.entities.wikipedia_search_query[0].value;
         // console.log("query: " +S(sayMessage).split('what', 'who', 'is', 'why', '?'));
         var wikiLink = "https://en.wikipedia.org/w/api.php?action=query&list=search&utf8=&format=json&srsearch=" + wikiTitle;
